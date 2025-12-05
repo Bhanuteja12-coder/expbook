@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EXP BOOK — Journal</title>
+  <style>
+    body{margin:0;font-family:Segoe UI, Tahoma, Geneva, Verdana, sans-serif;background:linear-gradient(135deg,#1c1f26,#2a2f3a);color:#fff;padding:20px}
+    .top{display:flex;align-items:center;gap:16px;justify-content:space-between;flex-wrap:wrap}
+    .logo{width:64px;height:64px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-weight:900;color:#111;font-family:Georgia}
+    h1{margin:0;font-size:28px}
+    .controls{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+    textarea{width:100%;padding:14px;border-radius:10px;border:none;font-size:16px;margin-top:16px;box-sizing:border-box}
+    .btn{padding:10px 16px;border-radius:10px;border:none;font-weight:700;cursor:pointer}
+    .add{background:#ffbb00;color:#111}
+    .entries{margin-top:20px;display:flex;flex-direction:column;gap:14px}
+    .entry{background:rgba(255,255,255,0.05);padding:16px;border-radius:12px;border:1px solid rgba(255,255,255,0.04)}
+    .entry h3{margin:8px 0 0 0}
+    .entry .meta{color:#cbd5e1;font-size:13px}
+    .smallBtn{padding:6px 10px;border-radius:8px;border:none;cursor:pointer;margin-right:8px}
+    .ack{background:#4c52ff;color:#fff}
+    .del{background:#ff4444;color:#fff}
+    .comment{background:#66aaff;color:#000}
+    .commentBox{background:rgba(0,0,0,0.35);padding:10px;margin-top:10px;border-radius:8px}
+    .topLinks{display:flex;gap:8px}
+
+    /* Center content and limit width for better readability */
+    .wrap-max{max-width:920px;margin:0 auto}
+
+    /* Responsive tweaks */
+    @media(max-width:900px){
+      .wrap-max{padding:0 12px}
+    }
+    @media(max-width:700px){
+      h1{font-size:20px}
+      .logo{width:52px;height:52px}
+      .top{flex-direction:column;align-items:flex-start}
+      .controls{width:100%;justify-content:space-between}
+      .topLinks{width:100%;justify-content:flex-end;margin-top:10px}
+      .controls .btn{flex:1;min-width:110px}
+      .smallBtn{margin-right:6px;padding:8px}
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap-max">
+  <div class="top">
+    <div style="display:flex;gap:12px;align-items:center">
+      <div class="logo">
+        <svg viewBox="0 0 100 100" width="56" height="56" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+          <defs>
+            <linearGradient id="exp-g" x1="0" x2="1" y1="0" y2="1">
+              <stop offset="0%" stop-color="#ffcc66"/>
+              <stop offset="100%" stop-color="#ff9900"/>
+            </linearGradient>
+          </defs>
+          <rect x="0" y="0" width="100" height="100" rx="16" ry="16" fill="url(#exp-g)" />
+          <text x="50" y="60" text-anchor="middle" font-family="Georgia, serif" font-weight="700" font-size="58" fill="#111">B</text>
+        </svg>
+      </div>
+      <div>
+        <h1>EXP BOOK — Your Journal</h1>
+        <div style="color:#cbd5e1;font-size:13px;margin-top:6px">Private, local-only journaling to turn mistakes into experience.</div>
+      </div>
+    </div>
+    <div class="controls topLinks">
+      <button class="btn" onclick="location.href='expbook.html'">Back to Home</button>
+      <button class="btn" onclick="downloadJSON()" style="background:#00bfa5;color:#fff">Export JSON</button>
+      <button class="btn" onclick="downloadPDF()" style="background:#6a5acd;color:#fff">Export PDF</button>
+    </div>
+  </div>
+
+  <textarea id="inputText" rows="4" placeholder="Write today's mistake..."></textarea>
+  <div style="display:flex;gap:10px;align-items:center">
+    <button class="btn add" onclick="saveEntry()">Add Experience</button>
+    <input id="searchBox" placeholder="Search…" style="padding:8px;border-radius:8px;border:none;background:rgba(255,255,255,0.04);color:#fff"> 
+  </div>
+
+  <div id="entries" class="entries"></div>
+  </div>
+
+  <script>
+    // Password protection removed: app opens without a password
+    let experiences = JSON.parse(localStorage.getItem('expData')||'[]');
+    let lastAck = JSON.parse(localStorage.getItem('lastAck')||'{}');
+
+    function saveData(){localStorage.setItem('expData',JSON.stringify(experiences));localStorage.setItem('lastAck',JSON.stringify(lastAck));}
+
+    function saveEntry(){
+      const t = document.getElementById('inputText').value.trim(); if(!t) return alert('Please write something.');
+      const now = new Date();
+      experiences.unshift({id:Date.now(),text:t,date:now.toLocaleDateString(),time:now.toLocaleTimeString(),count:0,comments:[]});
+      saveData(); render(); document.getElementById('inputText').value='';
+    }
+
+    function acknowledge(id){
+      const today = new Date().toLocaleDateString();
+      if(lastAck[id]===today){alert('You already acknowledged today.'); return}
+      const e = experiences.find(x=>x.id===id); if(!e) return;
+      e.count++; lastAck[id]=today; saveData(); render();
+    }
+
+    function deleteEntry(id){ if(!confirm('Delete this experience?')) return; experiences = experiences.filter(e=>e.id!==id); saveData(); render(); }
+
+    function addComment(id){ const text = prompt('Add comment'); if(!text) return; const now=new Date(); const e=experiences.find(x=>x.id===id); e.comments.push({text,date:now.toLocaleDateString(),time:now.toLocaleTimeString()}); saveData(); render(); }
+
+    function deleteComment(entryId,i){ if(!confirm('Delete comment?')) return; const e=experiences.find(x=>x.id===entryId); e.comments.splice(i,1); saveData(); render(); }
+
+    function render(){ const box=document.getElementById('entries'); box.innerHTML=''; experiences.forEach(e=>{
+      const div=document.createElement('div'); div.className='entry';
+      div.innerHTML=`<div class="meta"><b>${e.date}</b> — ${e.time}</div><h3>${e.text}</h3><div style="margin-top:8px">Acknowledged: <b>${e.count}</b></div>
+        <div style="margin-top:10px"><button class="smallBtn ack" onclick="acknowledge(${e.id})">Acknowledge</button>
+        <button class="smallBtn del" onclick="deleteEntry(${e.id})">Delete</button>
+        <button class="smallBtn comment" onclick="addComment(${e.id})">Comment</button></div>`;
+      if(e.comments && e.comments.length){
+        const cm=document.createElement('div'); cm.innerHTML='<br><b>Comments:</b>';
+        e.comments.forEach((c,i)=>{ const cDiv=document.createElement('div'); cDiv.className='commentBox'; cDiv.innerHTML=`<div class="meta"><b>${c.date}</b> — ${c.time}</div><div>${c.text}</div><button onclick="deleteComment(${e.id},${i})" style="background:#ff6666;color:#fff;padding:6px 8px;border-radius:8px;border:none;margin-top:6px">Delete</button>`; cm.appendChild(cDiv); });
+        div.appendChild(cm);
+      }
+      box.appendChild(div);
+    }); }
+
+    document.getElementById('searchBox').addEventListener('input',function(){const v=this.value.toLowerCase();document.querySelectorAll('.entry').forEach(en=>en.style.display=en.innerText.toLowerCase().includes(v)?'block':'none')});
+
+    // exports (basic)
+    function downloadJSON(){ const data = JSON.stringify(experiences, null, 2); const blob = new Blob([data],{type:'application/json'}); const url=URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url; a.download='expbook-data.json'; a.click(); URL.revokeObjectURL(url); }
+    function downloadPDF(){ alert('PDF export not implemented in this simple build. Use Export JSON or print to PDF from your browser.'); }
+
+    render();
+  </script>
+</body>
+</html>

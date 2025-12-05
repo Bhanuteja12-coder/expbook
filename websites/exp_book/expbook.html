@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EXP BOOK — Learn From Mistakes</title>
+  <style>
+    :root{--bg1:#0f1724;--bg2:#111827;--accent:#ffbb00;--muted:rgba(255,255,255,0.75)}
+    *{box-sizing:border-box}
+    html,body{height:100%;margin:0;font-family:Segoe UI, system-ui, -apple-system, "Helvetica Neue", Arial;color:var(--muted);background:linear-gradient(180deg,var(--bg1),var(--bg2));}
+
+    /* full-page sections with snap scrolling */
+    main{height:100vh;overflow-y:scroll;scroll-snap-type:y mandatory}
+    section{min-height:100vh;padding:60px 24px;display:flex;align-items:center;justify-content:center;scroll-snap-align:start}
+
+    .wrap{max-width:1100px;width:100%}
+    .hero{display:grid;grid-template-columns:1fr 420px;gap:40px;align-items:center}
+    .logo{width:96px;height:96px;border-radius:18px;display:flex;align-items:center;justify-content:center;font-weight:900;font-family:Georgia;color:#111;font-size:42px;box-shadow:0 10px 30px #0006}
+    h1{margin:0;font-size:40px;line-height:1.05;color:#fff}
+    p.lead{font-size:18px;color:#d7dbe6;margin-top:12px}
+
+    /* feature cards */
+    .features{display:grid;grid-template-columns:repeat(2,1fr);gap:18px;margin-top:20px}
+    .card{background:rgba(255,255,255,0.04);border-radius:12px;padding:18px;border:1px solid rgba(255,255,255,0.04)}
+    .card h3{margin:0 0 8px 0;color:#fff}
+    .card p{margin:0;color:#cbd5e1}
+
+    /* side nav dots */
+    .side-nav{position:fixed;right:18px;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;gap:12px}
+    .dot{width:12px;height:12px;border-radius:50%;background:rgba(255,255,255,0.18);display:block;cursor:pointer;border:2px solid transparent}
+    .dot.active{background:var(--accent);box-shadow:0 6px 18px rgba(255,187,0,0.16);}
+
+    /* benefit list */
+    .benefits{display:flex;flex-direction:column;gap:12px}
+    .benefit{display:flex;gap:14px;align-items:flex-start}
+    .badge{width:44px;height:44px;border-radius:10px;background:rgba(255,255,255,0.06);display:flex;align-items:center;justify-content:center;font-weight:700;color:var(--accent)}
+
+    /* CTA */
+    .cta{margin-top:18px;padding:12px 18px;background:var(--accent);color:#111;border-radius:10px;font-weight:700;border:none;cursor:pointer}
+
+    footer{padding:28px;text-align:center;color:#9aa4bf}
+
+    @media(max-width:920px){
+      .hero{grid-template-columns:1fr;}
+      .features{grid-template-columns:1fr}
+      .side-nav{display:none}
+      h1{font-size:32px}
+    }
+  </style>
+</head>
+<body>
+
+  <div class="side-nav" aria-hidden="false">
+    <a class="dot active" data-target="hero" title="Intro"></a>
+    <a class="dot" data-target="features" title="Features"></a>
+    <a class="dot" data-target="benefits" title="Benefits"></a>
+    <a class="dot" data-target="how" title="How it works"></a>
+    <a class="dot" data-target="cta" title="Get started"></a>
+  </div>
+
+  <main id="scroller">
+    <section id="hero">
+      <div class="wrap hero">
+        <div>
+          <div class="logo">
+            <svg viewBox="0 0 100 100" width="80" height="80" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+              <defs>
+                <linearGradient id="exp-g2" x1="0" x2="1" y1="0" y2="1">
+                  <stop offset="0%" stop-color="#ffcc66"/>
+                  <stop offset="100%" stop-color="#ff9900"/>
+                </linearGradient>
+              </defs>
+              <rect x="0" y="0" width="100" height="100" rx="18" ry="18" fill="url(#exp-g2)" />
+              <text x="50" y="60" text-anchor="middle" font-family="Georgia, serif" font-weight="700" font-size="62" fill="#111">B</text>
+            </svg>
+          </div>
+          <h1>EXP BOOK — Turn mistakes into lasting experience</h1>
+          <p class="lead">A focused, private journal designed to help you reflect, track, and improve — one mistake at a time. Built for daily use and long-term growth.</p>
+          <div style="margin-top:18px;display:flex;gap:10px;align-items:center">
+            <button class="cta" onclick="document.getElementById('scroller').scrollTo({top:window.innerHeight,behavior:'smooth'})">Explore Features</button>
+            <button class="cta" onclick="promptToOpen()">Open EXP BOOK</button>
+          </div>
+        </div>
+        <div>
+          <div class="card">
+            <h3>Why EXP BOOK?</h3>
+            <p>Simple journaling + acknowledgement mechanics help you form durable habits: record a mistake, acknowledge it, and reduce repetition over time.</p>
+          </div>
+          <div class="card" style="margin-top:14px">
+            <h3>Privacy-first</h3>
+            <p>Everything is stored locally in your browser. No accounts required — your growth stays with you.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="features">
+      <div class="wrap">
+        <h2 style="color:#fff;margin:0">Core Features</h2>
+        <p class="lead">Designed to boost reflection, consistency, and insight.</p>
+        <div class="features">
+          <div class="card">
+            <h3>Streaks & Acknowledgements</h3>
+            <p>Celebrate daily progress. Acknowledge entries to mark when you've internalized a lesson.</p>
+          </div>
+          <div class="card">
+            <h3>Tags & Filters</h3>
+            <p>Organize entries by life area to spot repeated issues and patterns quickly.</p>
+          </div>
+          <div class="card">
+            <h3>Weekly Reviews</h3>
+            <p>Auto-generated summaries help you reflect and set corrective actions for the week.</p>
+          </div>
+          <div class="card">
+            <h3>Export & Backup</h3>
+            <p>Download your data as PDF or JSON and keep a secure backup off-device.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="benefits">
+      <div class="wrap">
+        <h2 style="color:#fff;margin:0">Benefits of Using EXP BOOK</h2>
+        <p class="lead">Small daily actions compound into major personal growth.</p>
+        <div class="benefits" style="margin-top:18px">
+          <div class="benefit"><div class="badge">1</div><div><b>Reduce repeated mistakes:</b> Logging and acknowledging helps interrupt harmful cycles.</div></div>
+          <div class="benefit"><div class="badge">2</div><div><b>Build self-awareness:</b> Tagging and weekly summaries reveal hidden patterns.</div></div>
+          <div class="benefit"><div class="badge">3</div><div><b>Increase discipline:</b> Streaks and small wins keep you engaged day-to-day.</div></div>
+          <div class="benefit"><div class="badge">4</div><div><b>Private growth:</b> No account needed — it's your personal improvement tool.</div></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="how">
+      <div class="wrap">
+        <h2 style="color:#fff;margin:0">How It Works</h2>
+        <p class="lead">Three simple steps to use every day:</p>
+        <div style="margin-top:16px">
+          <div class="card">
+            <h3>1 • Record</h3>
+            <p>Write a brief note about what went wrong or what you want to improve.</p>
+          </div>
+          <div class="card" style="margin-top:12px">
+            <h3>2 • Acknowledge</h3>
+            <p>Mark entries when you’ve practiced the correction — this builds memory and habit.</p>
+          </div>
+          <div class="card" style="margin-top:12px">
+            <h3>3 • Reflect</h3>
+            <p>Use weekly reviews and tags to plan targeted adjustments and track progress.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="cta">
+      <div class="wrap" style="text-align:center">
+        <h2 style="color:#fff;margin:0">Ready to get started?</h2>
+        <p class="lead">Use EXP BOOK daily for small reflection sessions and build a better future self.</p>
+        <button class="cta" onclick="promptToOpen()">Open EXP BOOK</button>
+      </div>
+    </section>
+
+    <footer>
+      EXP BOOK — A simple, privacy-first reflection tool. Built for consistent improvement.
+    </footer>
+  </main>
+
+  <script>
+    // side nav interaction: scroll to sections and highlight active
+    const dots = Array.from(document.querySelectorAll('.dot'));
+    const sections = dots.map(d=>document.getElementById(d.dataset.target));
+    dots.forEach((dot,i)=>dot.addEventListener('click',()=>{ sections[i].scrollIntoView({behavior:'smooth'}); }));
+
+    const observer = new IntersectionObserver((entries)=>{
+      entries.forEach(ent=>{
+        const id = ent.target.id;
+        const idx = dots.findIndex(d=>d.dataset.target===id);
+        if(idx>=0) dots.forEach(d=>d.classList.remove('active'));
+        if(ent.isIntersecting && idx>=0) dots[idx].classList.add('active');
+      });
+    },{threshold:0.55});
+    sections.forEach(s=>s && observer.observe(s));
+  </script>
+
+  <script>
+    // No password required — open the app directly
+    function promptToOpen(){
+      location.href = 'app.html';
+    }
+  </script>
+
+</body>
+</html>
